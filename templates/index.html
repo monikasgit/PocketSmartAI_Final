@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>PocketSmart AI</title>
+
+    <link rel="stylesheet"
+          href="/static/style.css">
+</head>
+
+<body>
+
+    <header class="header">
+        <h1>💚 PocketSmart AI</h1>
+        <p>Your Smart Budget & Recommendation Assistant</p>
+    </header>
+
+    <main class="container">
+
+        <section class="welcome">
+            <h2>Plan Smart. Spend Smart.</h2>
+            <p>
+                Create a budget and get recommendations
+                that match your needs.
+            </p>
+        </section>
+
+        <section class="planner-card">
+
+            <h2>Choose Your Planner</h2>
+
+            <label for="planner">Planner Type</label>
+
+            <select id="planner">
+                <option value="home">Home Budget Planner</option>
+                <option value="party">Party Budget Planner</option>
+                <option value="jewelry">Jewelry Budget Planner</option>
+            </select>
+
+            <form id="budgetForm">
+
+                <label for="budget">Your Budget (₹)</label>
+
+                <input
+                    type="number"
+                    id="budget"
+                    name="budget"
+                    min="1"
+                    placeholder="Enter your budget"
+                    required
+                >
+
+                <label for="preferences">Your Preferences</label>
+
+                <textarea
+                    id="preferences"
+                    name="preferences"
+                    placeholder="Tell us what you need..."
+                    rows="3"
+                ></textarea>
+
+                <div id="homeFields">
+
+                    <label for="room_type">Room Type</label>
+
+                    <select id="room_type" name="room_type">
+                        <option value="Living Room">Living Room</option>
+                        <option value="Bedroom">Bedroom</option>
+                        <option value="Kitchen">Kitchen</option>
+                        <option value="Full Home">Full Home</option>
+                    </select>
+
+                </div>
+
+                <div id="partyFields" hidden>
+
+                    <label for="guests">Number of Guests</label>
+
+                    <input
+                        type="number"
+                        id="guests"
+                        name="guests"
+                        min="1"
+                        value="10"
+                    >
+
+                    <label for="occasion">Occasion</label>
+
+                    <input
+                        type="text"
+                        id="occasion"
+                        name="occasion"
+                        placeholder="Birthday, wedding..."
+                    >
+
+                </div>
+
+                <div id="jewelryFields" hidden>
+
+                    <label for="jewelry_type">Jewelry Type</label>
+
+                    <select id="jewelry_type" name="jewelry_type">
+                        <option value="Necklace">Necklace</option>
+                        <option value="Earrings">Earrings</option>
+                        <option value="Bracelet">Bracelet</option>
+                        <option value="Ring">Ring</option>
+                    </select>
+
+                </div>
+
+                <button type="submit" id="submitButton">
+                    Get Recommendations
+                </button>
+
+            </form>
+
+        </section>
+
+        <section class="result-card" id="resultSection" hidden>
+
+            <h2>Your Recommendations</h2>
+
+            <div id="result" aria-live="polite"></div>
+
+            <button type="button" id="copyButton">
+                Copy Recommendations
+            </button>
+
+        </section>
+
+    </main>
+
+    <footer>
+        <p>© 2026 PocketSmart AI | Plan your budget wisely.</p>
+    </footer>
+
+    <script src="/static/script.js"></script>
+
+</body>
+  </html>
