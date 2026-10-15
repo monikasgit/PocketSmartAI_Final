@@ -5,11 +5,16 @@ const homeFields = document.getElementById("homeFields");
 const partyFields = document.getElementById("partyFields");
 const jewelryFields = document.getElementById("jewelryFields");
 
+const guestsInput = document.getElementById("guests");
+const eventTypeInput = document.getElementById("event_type");
+
 const resultSection = document.getElementById("resultSection");
 const result = document.getElementById("result");
 
 const submitButton = document.getElementById("submitButton");
 const copyButton = document.getElementById("copyButton");
+
+const imageInput = document.getElementById("outfit_image");
 
 function updatePlannerFields() {
     const selected = planner.value;
@@ -17,97 +22,52 @@ function updatePlannerFields() {
     homeFields.hidden = selected !== "home";
     partyFields.hidden = selected !== "party";
     jewelryFields.hidden = selected !== "jewelry";
+
+    guestsInput.required = selected === "party";
+    eventTypeInput.required = selected === "party";
 }
 
 planner.addEventListener("change", updatePlannerFields);
 
 updatePlannerFields();
 
-form.addEventListener("submit", async function (event) {
-    event.preventDefault();
-
+form.addEventListener("submit", function (event) {
     const budget = Number(
         document.getElementById("budget").value
     );
 
     if (!Number.isFinite(budget) || budget <= 0) {
-        alert("Please enter a valid budget.");
+        event.preventDefault();
+        alert("Please enter a budget greater than zero.");
         return;
     }
 
-    const details = {
-        planner: planner.value,
-        budget: budget,
-        preferences:
-            document.getElementById("preferences").value
-    };
+    if (
+        planner.value === "jewelry" &&
+        imageInput.files.length > 0
+    ) {
+        const image = imageInput.files[0];
 
-    if (planner.value === "home") {
-        details.room_type =
-            document.getElementById("room_type").value;
-    }
-
-    if (planner.value === "party") {
-        details.guests =
-            Number(document.getElementById("guests").value);
-
-        details.occasion =
-            document.getElementById("occasion").value;
-    }
-
-    if (planner.value === "jewelry") {
-        details.jewelry_type =
-            document.getElementById("jewelry_type").value;
+        if (image.size > 5 * 1024 * 1024) {
+            event.preventDefault();
+            alert("Please upload an image smaller than 5 MB.");
+            return;
+        }
     }
 
     submitButton.disabled = true;
     submitButton.textContent = "Generating recommendations...";
-
-    resultSection.hidden = false;
-    result.textContent = "Please wait...";
-
-    try {
-        const response = await fetch("/recommend", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(details)
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(
-                data.detail || "Could not get recommendations."
-            );
-        }
-
-        result.textContent =
-            data.recommendation ||
-            data.result ||
-            JSON.stringify(data, null, 2);
-
-    } catch (error) {
-        result.textContent =
-            "Unable to get recommendations. Please check the server and try again.\n\n" +
-            error.message;
-
-    } finally {
-        submitButton.disabled = false;
-        submitButton.textContent = "Get Recommendations";
-    }
 });
 
 copyButton.addEventListener("click", async function () {
     try {
-        await navigator.clipboard.writeText(
-            result.textContent
+        await navigator.clipboard.writeText(result.innerText);
+
+        alert("Recommendations copied successfully!");
+
+    } catch (error) {
+        alert(
+            "Copy is unavailable in this browser. Please select and copy the text manually."
         );
-
-        alert("Recommendations copied!");
-
-    } catch {
-        alert("Copy is unavailable in this browser.");
     }
 });
