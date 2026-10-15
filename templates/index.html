@@ -6,40 +6,39 @@
 
     <title>PocketSmart AI</title>
 
-    <link rel="stylesheet"
-          href="/static/style.css">
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 
 <body>
 
     <header class="header">
         <h1>💚 PocketSmart AI</h1>
-        <p>Your Smart Budget & Recommendation Assistant</p>
+        <p>Your Smart Budget &amp; Recommendation Assistant</p>
     </header>
 
     <main class="container">
 
         <section class="welcome">
             <h2>Plan Smart. Spend Smart.</h2>
-            <p>
-                Create a budget and get recommendations
-                that match your needs.
-            </p>
+            <p>Create a budget and get recommendations that match your needs.</p>
         </section>
 
         <section class="planner-card">
 
             <h2>Choose Your Planner</h2>
 
-            <label for="planner">Planner Type</label>
+            <form id="budgetForm"
+                  action="/recommend"
+                  method="post"
+                  enctype="multipart/form-data">
 
-            <select id="planner">
-                <option value="home">Home Budget Planner</option>
-                <option value="party">Party Budget Planner</option>
-                <option value="jewelry">Jewelry Budget Planner</option>
-            </select>
+                <label for="planner">Planner Type</label>
 
-            <form id="budgetForm">
+                <select id="planner" name="planner" required>
+                    <option value="home">Home Budget Planner</option>
+                    <option value="party">Party Budget Planner</option>
+                    <option value="jewelry">Jewelry Budget Planner</option>
+                </select>
 
                 <label for="budget">Your Budget (₹)</label>
 
@@ -48,6 +47,7 @@
                     id="budget"
                     name="budget"
                     min="1"
+                    step="any"
                     placeholder="Enter your budget"
                     required
                 >
@@ -76,6 +76,15 @@
 
                 <div id="partyFields" hidden>
 
+                    <label for="event_type">Event Type</label>
+
+                    <select id="event_type" name="event_type">
+                        <option value="Birthday">Birthday</option>
+                        <option value="Wedding">Wedding</option>
+                        <option value="Family Gathering">Family Gathering</option>
+                        <option value="Other Celebration">Other Celebration</option>
+                    </select>
+
                     <label for="guests">Number of Guests</label>
 
                     <input
@@ -86,27 +95,40 @@
                         value="10"
                     >
 
+                </div>
+
+                <div id="jewelryFields" hidden>
+
                     <label for="occasion">Occasion</label>
 
                     <input
                         type="text"
                         id="occasion"
                         name="occasion"
-                        placeholder="Birthday, wedding..."
+                        placeholder="Birthday, wedding, festival..."
                     >
 
-                </div>
+                    <label for="style">Jewelry Style</label>
 
-                <div id="jewelryFields" hidden>
-
-                    <label for="jewelry_type">Jewelry Type</label>
-
-                    <select id="jewelry_type" name="jewelry_type">
-                        <option value="Necklace">Necklace</option>
-                        <option value="Earrings">Earrings</option>
-                        <option value="Bracelet">Bracelet</option>
-                        <option value="Ring">Ring</option>
+                    <select id="style" name="style">
+                        <option value="Traditional">Traditional</option>
+                        <option value="Modern">Modern</option>
+                        <option value="Minimal">Minimal</option>
+                        <option value="Party Wear">Party Wear</option>
                     </select>
+
+                    <label for="outfit_image">
+                        Upload Outfit Image (Optional)
+                    </label>
+
+                    <input
+                        type="file"
+                        id="outfit_image"
+                        name="outfit_image"
+                        accept="image/*"
+                    >
+
+                    <small>Maximum image size: 5 MB.</small>
 
                 </div>
 
@@ -122,7 +144,15 @@
 
             <h2>Your Recommendations</h2>
 
-            <div id="result" aria-live="polite"></div>
+            {% if error %}
+                <p class="error">{{ error }}</p>
+            {% endif %}
+
+            {% if result %}
+                <div id="result">{{ result }}</div>
+            {% else %}
+                <div id="result" aria-live="polite"></div>
+            {% endif %}
 
             <button type="button" id="copyButton">
                 Copy Recommendations
@@ -139,4 +169,4 @@
     <script src="/static/script.js"></script>
 
 </body>
-  </html>
+                        </html>
