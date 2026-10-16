@@ -1,4 +1,5 @@
 const planner = document.getElementById("planner");
+
 const form = document.getElementById("budgetForm");
 
 const homeFields = document.getElementById("homeFields");
@@ -16,58 +17,147 @@ const copyButton = document.getElementById("copyButton");
 
 const imageInput = document.getElementById("outfit_image");
 
+
+// Show the correct fields for each planner
+
 function updatePlannerFields() {
+
     const selected = planner.value;
 
     homeFields.hidden = selected !== "home";
+
     partyFields.hidden = selected !== "party";
+
     jewelryFields.hidden = selected !== "jewelry";
 
     guestsInput.required = selected === "party";
+
     eventTypeInput.required = selected === "party";
 }
 
-planner.addEventListener("change", updatePlannerFields);
+
+// Listen for planner changes
+
+planner.addEventListener(
+    "change",
+    updatePlannerFields
+);
+
+
+// Initialize planner fields
 
 updatePlannerFields();
 
+
+// Validate the form before submission
+
 form.addEventListener("submit", function (event) {
-    const budget = Number(
-        document.getElementById("budget").value
-    );
+
+    const budgetInput = document.getElementById("budget");
+
+    const budget = Number(budgetInput.value);
 
     if (!Number.isFinite(budget) || budget <= 0) {
+
         event.preventDefault();
+
         alert("Please enter a budget greater than zero.");
+
+        budgetInput.focus();
+
         return;
     }
+
+
+    // Validate the number of guests
+
+    if (planner.value === "party") {
+
+        const guests = Number(guestsInput.value);
+
+        if (!Number.isInteger(guests) || guests < 1) {
+
+            event.preventDefault();
+
+            alert("Please enter at least one guest.");
+
+            guestsInput.focus();
+
+            return;
+        }
+    }
+
+
+    // Validate the optional image
 
     if (
         planner.value === "jewelry" &&
         imageInput.files.length > 0
     ) {
+
         const image = imageInput.files[0];
 
-        if (image.size > 5 * 1024 * 1024) {
+        if (!image.type.startsWith("image/")) {
+
             event.preventDefault();
+
+            alert("Please select a valid image.");
+
+            return;
+        }
+
+
+        if (image.size > 5 * 1024 * 1024) {
+
+            event.preventDefault();
+
             alert("Please upload an image smaller than 5 MB.");
+
             return;
         }
     }
 
+
+    // Show loading status
+
     submitButton.disabled = true;
-    submitButton.textContent = "Generating recommendations...";
+
+    submitButton.textContent =
+        "Generating recommendations...";
+
 });
 
-copyButton.addEventListener("click", async function () {
-    try {
-        await navigator.clipboard.writeText(result.innerText);
 
-        alert("Recommendations copied successfully!");
+// Copy the recommendations
 
-    } catch (error) {
-        alert(
-            "Copy is unavailable in this browser. Please select and copy the text manually."
-        );
+copyButton.addEventListener(
+    "click",
+    async function () {
+
+        const textToCopy = result.innerText.trim();
+
+        if (!textToCopy) {
+
+            alert("No recommendations available to copy.");
+
+            return;
+        }
+
+
+        try {
+
+            await navigator.clipboard.writeText(textToCopy);
+
+            alert("Recommendations copied successfully!");
+
+        } catch (error) {
+
+            alert(
+                "Copy is unavailable in this browser. " +
+                "Please select and copy the text manually."
+            );
+
+        }
+
     }
-});
+);
